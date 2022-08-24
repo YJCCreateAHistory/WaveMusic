@@ -1,0 +1,14 @@
+import {UPDATE_DATA, STATE} from "./types/index"
+export default {
+    // userinfo
+    updateData(state:STATE, data:UPDATE_DATA){
+        state.data[data.key] = data.value
+    },
+    // playlist
+    updateUserPlayList(state:STATE, data:UPDATE_DATA){
+        state.data[data.key] = data.value
+    },
+    updateDataByAccount(state:STATE, data:UPDATE_DATA) {
+        state.data[data.key] = data.value
+    }
+}
