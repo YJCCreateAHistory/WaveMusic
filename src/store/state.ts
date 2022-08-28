@@ -2,7 +2,9 @@ const state = {
     data: {
         user: {},
         loginMode: null,
-        playlist:{}
+        playlist:{},
+        userData:{},
+        detailInfo:{}
     }
 }
 

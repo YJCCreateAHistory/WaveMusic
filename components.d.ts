@@ -8,12 +8,15 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Cellphone: typeof import('./src/components/cellphone/cellphone.vue')['default']
+    ElButton: typeof import('element-plus/es')['ElButton']
     ElIcon: typeof import('element-plus/es')['ElIcon']
+    ElInput: typeof import('element-plus/es')['ElInput']
     Email: typeof import('./src/components/eamilLogin/email.vue')['default']
     Login: typeof import('./src/components/accountPage/login.vue')['default']
     Nmheader: typeof import('./src/components/head_navigation/Nmheader.vue')['default']
     Qrcode: typeof import('./src/components/loginByQRcode/qrcode.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Way: typeof import('./src/components/loginWayChoose/way.vue')['default']
   }
 }

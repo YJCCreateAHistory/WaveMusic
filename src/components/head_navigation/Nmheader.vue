@@ -23,8 +23,12 @@
           <div className="menu" v-if="showFlag">
             <div className="list">
               <ul>
-                <li class="iconfont icon-shezhi">设置</li>
-                <li class="iconfont icon-denglu1" @click="goLogin">登录</li>
+                <li class="iconfont icon-shezhi">
+                  {{ loginMenu.choose.setting }}
+                </li>
+                <li class="iconfont icon-denglu1" @click="goLogin">
+                  {{ loginMenu.choose.login }}
+                </li>
               </ul>
             </div>
           </div>
@@ -41,13 +45,35 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
-import { IMG_SRC } from "./index";
+import { onMounted, reactive, ref } from "vue";
+import { IMG_SRC, MENU_LIST } from "./index";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import { setCookie, getCookie, removeCookie } from "../../utils/cookie";
+const store = useStore();
 const router = useRouter();
 let img_src = ref<IMG_SRC>(
   "https://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=60y60"
 );
+let f = ref<boolean>(false);
+let loginMenu = reactive<MENU_LIST>({
+  choose: {
+    setting: "设置",
+    login: "登录",
+  },
+});
+const getStatus = () => {
+  if (getCookie("MUSIC_U") !== undefined) {
+    f.value = !f.value;
+    loginMenu.choose.login = "退出登录";
+    // img_src = store.state.data.userData.profile.avatarUrl
+  } else {
+    return;
+  }
+};
+onMounted(() => {
+  getStatus();
+});
 // 显示登录设置项
 let showFlag = ref<boolean>(false);
 const showLoginEdit = () => {
@@ -55,11 +81,18 @@ const showLoginEdit = () => {
 };
 // 登录页
 const goLogin = () => {
-  router.push({
-    name: "Login",
-    params: {},
-  });
-  showFlag.value = !showFlag.value;
+  if (f.value === true) {
+    removeCookie(store.state.data.userData.MUSIC_U);
+    loginMenu.choose.login = "登录";
+    f.value = !f.value;
+  } else {
+    loginMenu.choose.login = "登录";
+    router.push({
+      name: "Login",
+      params: {},
+    });
+    showFlag.value = !showFlag.value;
+  }
 };
 </script>
 <style scoped lang="less">

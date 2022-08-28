@@ -10,5 +10,11 @@ export default {
     },
     updateDataByAccount(state:STATE, data:UPDATE_DATA) {
         state.data[data.key] = data.value
+    },
+    sendDetailTostore(state:STATE, data:UPDATE_DATA) {
+        state.data[data.key] = data.value
+    },
+    getUserDetailInfo(state:STATE, data:UPDATE_DATA) {
+        state.data[data.key] = data.value
     }
 }

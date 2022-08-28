@@ -14,13 +14,6 @@
         </div>
         <p className="open">{{ remindText }}</p>
       </div>
-      <div className="change_login_way">
-        <ul>
-          <li @click="send" :plain="true">邮箱登录</li>
-          <li>|</li>
-          <li>手机号登录</li>
-        </ul>
-      </div>
     </div>
   </div>
 </template>
@@ -32,32 +25,39 @@ import {
   haveQRcodeKey,
   createQrcode,
   checkQrcodeLoginState,
+  getLoginStatus,
 } from "../../api/login/login";
 import QRCode from "qrcode";
-// 发送登录框的状态
-const emits = defineEmits<{ (e: string, data: boolean): void }>();
-const send = () => {
-  emits("sendQRLogin", true); // 邮箱登录
-};
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import { setCookie,getCookie } from "../../utils/cookie";
+
+const store = useStore();
+const router = useRouter();
 let qrcodeKey = ref<string>("");
 let qrimg = ref<string>("");
+let key = ref<string>("");
 const getQrcodeKey = () => {
-  return haveQRcodeKey().then((res: RES) => {
+  haveQRcodeKey().then((res: RES) => {
     const {
       data: { data },
     } = res;
+    key.value = data.unikey;
     if (data.code === 200) {
       qrcodeKey.value = data.unikey;
       // 将网址信息解析为二维码
-      QRCode.toString(`https://music.163.com/login?codekey=${qrcodeKey}`, {
-        width: 192,
-        margin: 0,
-        color: {
-          dark: "#335eea",
-          light: "#00000000",
-        },
-        type: "svg",
-      })
+      QRCode.toString(
+        `https://music.163.com/login?codekey=${qrcodeKey.value}`,
+        {
+          width: 192,
+          margin: 0,
+          color: {
+            dark: "#335eea",
+            light: "#00000000",
+          },
+          type: "svg",
+        }
+      )
         .then((svg: any) => {
           qrimg.value = `data:image/svg+xml;utf-8,${encodeURIComponent(svg)}`; //解析
         })
@@ -70,25 +70,45 @@ const getQrcodeKey = () => {
 onMounted(() => {
   getQrcodeKey();
 });
+
 // 二维码状态
 let remindText = ref<string>("打开网易云音乐APP扫码登录");
-// const timingToCheckState = setInterval(() => {
-//   checkQrcodeLoginState(qrcodeKey.value).then((res: RES) => {
-//     let { data } = res;
-//     if (data.code === "") return;
-//     if (data.code === 800) {
-//       getQrcodeKey();
-//       remindText.value = "二维码已失效，请重新扫码";
-//     } else if (data.code === 801) {
-//       remindText.value = "打开网易云音乐APP扫码登录";
-//     } else if (data.code === 802) {
-//       remindText.value = "扫描成功，请在手机确认登录";
-//     } else if (data.code === 803) {
-//       clearInterval(timingToCheckState);
-//       remindText.value = "登录成功，正在跳转中...";
-//     }
-//   });
-// }, 1000);
+const timingToCheckState = setInterval(() => {
+  checkQrcodeLoginState(key.value).then(async (res: RES) => {
+    let { data } = res;
+    if (data.code === "") return;
+    if (data.code === 800) {
+      getQrcodeKey();
+      remindText.value = "二维码已失效，请重新扫码";
+      clearInterval(timingToCheckState);
+    } else if (data.code === 802) {
+      clearInterval(timingToCheckState);
+      remindText.value = "扫描成功，请在手机确认登录";
+    } else if (data.code === 803) {
+      clearInterval(timingToCheckState);
+      setCookie(data.cookie)
+      remindText.value = "登录成功，正在跳转中...";
+      const resCode = await getLoginStatus(data.cookie);
+      if (resCode.data.data.code === 200) {
+        store.commit("sendDetailTostore", {
+          key: "userData",
+          value: {
+            account: resCode.data.data.account,
+            profile: resCode.data.data.profile,
+            MUSIC_U:data.cookie
+          },
+        });
+        store.dispatch("getUserAccountProfile").then((): void => {
+          router.push({
+            name: "Home",
+            params: {},
+          });
+        });
+      }
+    }
+  });
+}, 5000);
+console.log(store.state.data.userDdata)
 </script>
 
 <style scoped lang="less">
@@ -98,7 +118,7 @@ let remindText = ref<string>("打开网易云音乐APP扫码登录");
   left: 50%;
   transform: translateX(-50%);
   width: 260px;
-  height: 540px;
+  height: 480px;
   .login_box {
     width: 100%;
     height: 100%;
@@ -166,7 +186,7 @@ let remindText = ref<string>("打开网易云音乐APP扫码登录");
         position: absolute;
         left: 50%;
         top: 100%;
-        color: blue;
+        color: #000;
         font-weight: 900;
         transform: translate(-50%, -50%);
         font-family: Barlow, ui-sans-serif, system-ui, -apple-system,
@@ -177,32 +197,6 @@ let remindText = ref<string>("打开网易云音乐APP扫码登录");
           color: #f4528b;
 
           cursor: pointer;
-        }
-      }
-    }
-    .change_login_way {
-      width: 180px;
-      height: 40px;
-      position: absolute;
-      top: 90%;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      ul {
-        list-style: none;
-        padding-inline-start: 0;
-        display: flex;
-        justify-content: space-between;
-        li {
-          color: blue;
-          font-weight: 900;
-          font-family: BlinkMacSystemFont, Helvetica Neue, PingFang SC,
-            Microsoft YaHei, Source Han Sans SC, Noto Sans CJK SC,
-            WenQuanYi Micro Hei, sans-serif, microsoft uighur;
-          &:hover {
-            cursor: pointer;
-            color: #f4528b;
-          }
         }
       }
     }

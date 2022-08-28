@@ -1,5 +1,5 @@
 <template>
-  <div className="container1">
+  <div className="container">
     <div className="login_box">
       <div className="login_img">
         <img
@@ -11,36 +11,104 @@
       <div className="login_Input">
         <div className="username">
           <i className="iconfont icon-youxiang"></i>
-          <input type="text" placeholder="手机号" />
+          <input
+            type="text"
+            placeholder="手机号"
+            v-model="phone"
+            @blur.native.capture="check"
+          />
         </div>
         <div className="psd">
           <i className="iconfont icon-logo-flickr"></i>
-          <input type="password" placeholder="密码"/>
+          <input type="text" placeholder="请输入验证码" v-model="verify" />
+          <el-button
+            type="primary"
+            class="virefBtn"
+            @click="Verification"
+            v-show="show"
+            >{{ virefText }}</el-button
+          >
+          <el-button type="primary" class="virefBtnCount" v-show="!show"
+            >{{ count }}s后重新发送</el-button
+          >
         </div>
+
         <div className="loginIn">
-          <button className="login_btn">登录</button>
+          <button className="login_btn" @click="loginIn">登录</button>
         </div>
-      </div>
-      <div className="change_login_way">
-        <ul>
-          <li @click="send" :plain="true">二维码登录</li>
-          <li>|</li>
-          <li>邮箱登录</li>
-        </ul>
       </div>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { defineEmits } from "vue";
+import { ref } from "vue";
+import {
+  loginByCellPhone,
+  sendVirefMessage,
+  checkVirefMessage,
+} from "../../api/login/login";
+import router from "../../router";
+import { RES } from "./index";
+import { getUserAccount } from "../../api/account/userAccount";
 
-const emits = defineEmits<{ (e: string, data: boolean): void }>();
-const send = () => {
-  emits("sendCellPhone", true);
+let phone = ref<string>("");
+const verify = ref<string>("");
+let virefText = ref<string>("发送验证码");
+const show = ref(true);
+const timer = ref();
+const count = ref();
+let TIME_COUNT = ref<number>(60);
+const check = (): void => {
+  let reg =
+    /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/;
+  if (reg.test(phone.value)) {
+    return;
+  } else {
+    ElNotification.error({
+      title: "Error",
+      message: "手机号格式有误，请重新输入",
+      offset: 100,
+    });
+  }
+};
+const Verification = () => {
+  sendVirefMessage(phone.value);
+  if (!timer.value && phone.value !== "") {
+    count.value = TIME_COUNT.value;
+    show.value = false;
+    timer.value = setInterval(() => {
+      if (count.value > 0 && count.value <= TIME_COUNT.value) {
+        count.value--;
+      } else {
+        show.value = true;
+        clearInterval(timer.value);
+        timer.value = null;
+      }
+    }, 1000);
+  }
+};
+const loginIn = async () => {
+  const { data } = await checkVirefMessage(phone.value, verify.value);
+  console.log(data);
+  if (data.code === 200) {
+    router.push({ name: "Home", params: {} });
+    getUserAccount().then((res) => {
+      const {
+        data: { account },
+      } = res;
+      console.log(account);
+    });
+  } else {
+    ElNotification.error({
+      title: "Error",
+      message: "验证码错误",
+      offset: 100,
+    });
+  }
 };
 </script>
 <style scoped lang="less">
-.container1 {
+.container {
   position: absolute;
   top: 100px;
   left: 50%;
@@ -92,14 +160,6 @@ const send = () => {
       top: 55%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background-color: #eaeffd;
-      border-radius: 10px;
-      background-color: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
-      -webkit-box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
-      -webkit-border-radius: 10px;
       .iconfont {
         margin-left: 5px;
         font-size: 16px;
@@ -135,13 +195,26 @@ const send = () => {
         border-radius: 10px;
 
         input {
-          width: 280px;
+          width: 184px;
           height: 40px;
           background-color: #fff;
           border: none;
           outline: none;
           background-color: #f5f5f7;
           padding-left: 10px;
+        }
+        .virefBtn {
+          position: absolute;
+          height: 41px;
+          top: 1px;
+          left: 217px;
+        }
+        .virefBtnCount {
+          position: absolute;
+          height: 41px;
+          top: 1px;
+          width: 124.91px;
+          left: 182px;
         }
       }
       .loginIn {

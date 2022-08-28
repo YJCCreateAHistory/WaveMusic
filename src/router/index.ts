@@ -10,15 +10,6 @@ const routes: Array<RouteRecordRaw> = [
         }
     },
     {
-        path: "/home",
-        name: "Homes",
-        component: () => import("../views/home/home.vue"),
-        meta: {
-            title: "首页",
-            keepAlive: true
-        }
-    },
-    {
         path: "/login",
         name: "Login",
         component: () => import("../views/login/loginIn.vue"),

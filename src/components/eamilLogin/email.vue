@@ -21,13 +21,6 @@
           <button className="login_btn" @click="loginIn">登录</button>
         </div>
       </div>
-      <div className="change_login_way">
-        <ul>
-          <li @click="send" :plain="true">二维码登录</li>
-          <li>|</li>
-          <li>手机号登录</li>
-        </ul>
-      </div>
     </div>
   </div>
 </template>
@@ -51,6 +44,7 @@ let password = ref<string>("");
 const loginByEmailTo = () => {
   loginByEmail(email.value, password.value).then((res: RES) => {
     const { data } = res;
+    console.log(data);
     if (data.code !== 200) {
       ElNotification.error({
         title: "Error",
@@ -64,14 +58,15 @@ const loginByEmailTo = () => {
         offset: 100,
       });
       setCookie(data.cookie); // 存放cookie
-      store.commit("updateDataByAccount", { key: "loginMode", value: "account" });
-      store.dispatch("getUserProfile").then(():void => {
-        store.dispatch("getUserLikePlayList").then(():void => {
+      store.commit("updateDataByAccount", {
+        key: "loginMode",
+        value: "account",
+      });
+      store.dispatch("getUserProfile").then((): void => {
+        store.dispatch("getUserLikePlayList").then((): void => {
           router.push({
-            name: "Home",
-            params:{
-
-            }
+            name: "Homes",
+            params: {},
           });
         });
       });
@@ -79,7 +74,7 @@ const loginByEmailTo = () => {
   });
 };
 // 邮箱验证
-const checkEmail = ():void=> {
+const checkEmail = (): void => {
   let reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
   if (!reg.test(email.value)) {
     ElNotification.error({
@@ -93,13 +88,13 @@ const checkEmail = ():void=> {
 };
 // 登录
 const loginIn = async() => {
-   await checkEmail();
-   console.log(store.state.data)
+  checkEmail();
+  getUserAccount().then((res) => {
+  const {data:{account}} = res
+  console.log(account)
+  console.log(store.state.data)
+});
 };
-// getUserAccount().then((res) => {
-//   const {data:{account}} = res
-//   console.log(account)
-// });
 </script>
 <style scoped lang="less">
 .container {
