@@ -4,8 +4,8 @@
 </template>
 
 <script setup lang="ts">
-import Nmheader from '../../components/head_navigation/Nmheader.vue';
-import loginPage from "../../components/accountPage/login.vue"
+import Nmheader from '../../components/navigation/Nmheader.vue';
+import loginPage from "../../components/account/login.vue"
 </script>
 
 <style scoped lang="less">

@@ -7,7 +7,27 @@ const routes: Array<RouteRecordRaw> = [
         meta: {
             title: "首页",
             keepAlive: true
-        }
+        },
+        children: [
+            {
+                path: "/home/libary",
+                name: "Libary",
+                component: () => import("../views/libary/libary.vue"),
+                meta: {
+                    title: "音乐库",
+                    keepAlive: true
+                }
+            },
+            {
+                path: "/home/libary/mv",
+                name: "Play",
+                component: () => import("../views/play/playmv.vue"),
+                meta: {
+                    title: "NV",
+                    keepAlive: true
+                }
+            }
+        ]
     },
     {
         path: "/login",
@@ -19,11 +39,11 @@ const routes: Array<RouteRecordRaw> = [
         },
     },
     {
-        path:"/login/account",
-        name:"Account",
+        path: "/login/account",
+        name: "Account",
         component: () => import("../views/loginAccount/account.vue"),
-        meta:{
-            title:"登录页面",
+        meta: {
+            title: "登录页面",
             keepAlive: true,
         }
     }

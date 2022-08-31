@@ -12,9 +12,9 @@
 </template>
 <script setup lang="ts">
 import { reactive, ref, toRefs } from "vue";
-import Nmheader from "../../components/head_navigation/Nmheader.vue";
-import QRcode from "../../components/loginByQRcode/qrcode.vue";
-import EmailLogin from "../../components/eamilLogin/email.vue";
+import Nmheader from "../../components/navigation/Nmheader.vue";
+import QRcode from "../../components/qrcode/qrcode.vue";
+import EmailLogin from "../../components/eamil/email.vue";
 import CellPhone from "../../components/cellphone/cellphone.vue";
 
 let qrcode = ref<boolean>(true);

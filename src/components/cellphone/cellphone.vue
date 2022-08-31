@@ -49,8 +49,9 @@ import {
 } from "../../api/login/login";
 import router from "../../router";
 import { RES } from "./index";
+import { useStore } from "vuex";
 import { getUserAccount } from "../../api/account/userAccount";
-
+const store = useStore();
 let phone = ref<string>("");
 const verify = ref<string>("");
 let virefText = ref<string>("发送验证码");
@@ -89,14 +90,10 @@ const Verification = () => {
 };
 const loginIn = async () => {
   const { data } = await checkVirefMessage(phone.value, verify.value);
-  console.log(data);
   if (data.code === 200) {
-    router.push({ name: "Home", params: {} });
-    getUserAccount().then((res) => {
-      const {
-        data: { account },
-      } = res;
-      console.log(account);
+    store.commit("sendUserIdByPhone", { key: "phone", value: data });
+    store.dispatch("getUserAccountByPhone").then((): void => {
+      router.push({ name: "Home", params: {} });
     });
   } else {
     ElNotification.error({

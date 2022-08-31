@@ -2,13 +2,17 @@ import {createStore} from "vuex"
 import actions from "./action"
 import mutations from "./mutation"
 import state from "./state"
-import plugins from "./plugins"
-const plugin = plugins
+
+import createPersistedState from "vuex-persistedstate"
 const options = {
     actions,
     mutations,
     state,
-    plugin
 }
-const store = createStore(options)
+const store = createStore({
+    ...options,
+    plugins:[
+        createPersistedState()
+    ]
+})
 export default store

@@ -1,20 +1,29 @@
-import {UPDATE_DATA, STATE} from "./types/index"
+import { UPDATE_DATA, STATE } from "./types/index"
 export default {
     // userinfo
-    updateData(state:STATE, data:UPDATE_DATA){
+    updateData(state: STATE, data: UPDATE_DATA) {
+        state.data[data.key] = data.value
+    },
+    updateDataByAccount(state: STATE, data: UPDATE_DATA) {
+        state.data[data.key] = data.value
+    },
+    sendDetailTostore(state: STATE, data: UPDATE_DATA) {
+        state.data[data.key] = data.value
+    },
+    getUserDetailInfo(state: STATE, data: UPDATE_DATA) {
         state.data[data.key] = data.value
     },
     // playlist
-    updateUserPlayList(state:STATE, data:UPDATE_DATA){
+    updateUserPlayList(state: STATE, data: UPDATE_DATA) {
         state.data[data.key] = data.value
     },
-    updateDataByAccount(state:STATE, data:UPDATE_DATA) {
+    sendUserIdByPhone(state: STATE, data: UPDATE_DATA) {
         state.data[data.key] = data.value
     },
-    sendDetailTostore(state:STATE, data:UPDATE_DATA) {
+    sendMusicNums(state: STATE, data: UPDATE_DATA) {
         state.data[data.key] = data.value
     },
-    getUserDetailInfo(state:STATE, data:UPDATE_DATA) {
+    sendMusicLiked(state: STATE, data: UPDATE_DATA) {
         state.data[data.key] = data.value
     }
 }

@@ -4,7 +4,10 @@ const state = {
         loginMode: null,
         playlist:{},
         userData:{},
-        detailInfo:{}
+        detailInfo:{},
+        phone:{},
+        num:0,
+        likeMusic:[]
     }
 }
 

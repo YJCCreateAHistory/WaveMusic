@@ -1,29 +1,25 @@
 import request from "../../http/request"
 /**
- *@business {} get user profile 
- * 
-**/
-export const getUserAccount = ():Promise<any>=>{
+ * @business {用户喜欢歌手}
+ * @params {必选：id}
+ * **/
+export const getUserLikeSinger = (id:string)=>{
     return request({
-        url:"/user/account",
+        url:"/user/follows",
         method:"get",
         params:{
+            uid:id,
             timesamp:new Date().getTime()
         }
     })
 }
 
-/**
- *@business {} get user homePage detail 
- * 
-**/
-
-export const getUserDetail = (uid:string):Promise<any>=>{
+export const getUserFollowed = (id:string)=>{
     return request({
-        url:"/user/detail",
+        url:"/user/followeds",
         method:"get",
         params:{
-            uid:uid,
+            uid:id,
             timesamp:new Date().getTime()
         }
     })

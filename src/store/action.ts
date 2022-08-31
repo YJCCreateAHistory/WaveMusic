@@ -1,5 +1,12 @@
 import { isLoginedIn, isAccountLoginedin } from "../utils/cookie"
-import { getUserAccount, getUserLiked, getUserPlayList, getUserDetail } from "../api/account/userAccount"
+import { getUserAccount, getUserDetail } from "../api/account/userAccount"
+import {
+    getUserLiked,
+    getUserPlayList,
+    getUserLikedMusics,
+    getPlayListDetail,
+    getMusicDeatil
+} from "../api/music/music"
 import { USER_ACCOUNT } from "./types/index"
 
 export default {
@@ -22,33 +29,53 @@ export default {
             // get user detail
             return getUserDetail(state.data.userData.account.id).then((res: USER_ACCOUNT) => {
                 if (res.data.code === 200) {
-                    commit("getUserDetailInfo", { key: "detailInfo", value: { detail: res.data } })
+                    commit("getUserDetailInfo",
+                        {
+                            key: "detailInfo",
+                            value: res.data
+                        })
                 }
             })
         }
     },
     // user playlist
     getUserLikePlayList: ({ state, commit }: any): void | Promise<any> => {
-        if (!isAccountLoginedin(state.data.loginMode)) return
         if (isLoginedIn()) {
             let params = {
-                uid: state.data.user.id,
+                uid: state.data.userData.account.id,
                 limit: 2000,
-                offset: 0
+                offset: 0,
+                timesamp: new Date().getTime()
             }
-            return getUserPlayList(params).then((res: USER_ACCOUNT) => {
+            return getUserPlayList(params).then(async (res: USER_ACCOUNT) => {
                 // submit playlist
-                let { playlist } = res
-                if (playlist) {
-                    let params = {
-                        key: "playList",
-                        value: playlist
+                if (res.data.code === 200) {
+                    commit("updateUserPlayList", {
+                        key: "playlist",
+                        value: res.data.playlist
+                    })
+                    let music = {
+                        id: res.data.playlist[0].id,
+                        limit: 12,
+                        offset: 0,
                     }
-                    commit("updateUserPlayList", params)
-                } else {
-
+                    getUserLikedMusics(music).then((res: USER_ACCOUNT) => {
+                        const { data: { songs } } = res
+                        commit('sendMusicNums', { key: "likeMusic", value: songs })
+                    })
+                    getPlayListDetail(music.id).then((res: USER_ACCOUNT) => {
+                        const { data: { privileges,playlist } } = res
+                        commit('sendMusicLiked', { key: "num", value: privileges.length })
+                        // commit("sendMusicLiked", { key: "num", value: playlist.trackIds.length})
+                    })
                 }
             })
         }
     },
+    getUserAccountByPhone: ({ state, commit }: any): void | Promise<any> => {
+        if (isLoginedIn()) {
+
+        }
+    },
+
 }

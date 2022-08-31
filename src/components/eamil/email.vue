@@ -62,14 +62,6 @@ const loginByEmailTo = () => {
         key: "loginMode",
         value: "account",
       });
-      store.dispatch("getUserProfile").then((): void => {
-        store.dispatch("getUserLikePlayList").then((): void => {
-          router.push({
-            name: "Homes",
-            params: {},
-          });
-        });
-      });
     }
   });
 };

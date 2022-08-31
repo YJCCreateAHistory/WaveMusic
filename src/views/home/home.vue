@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import Nmheader from "../../components/head_navigation/Nmheader.vue"
+import Nmheader from "../../components/navigation/Nmheader.vue"
 import {useStore} from "vuex"
+import {getCookie} from "../../utils/cookie"
 const store = useStore()
-console.log(store.state.data.userData)
+
 </script>
 
 <template>
 <Nmheader></Nmheader>
+<router-view></router-view>
 </template>
 
 <style scoped lang="less">

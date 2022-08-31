@@ -14,7 +14,7 @@
       <ul>
         <li className="nm_headerName">首页</li>
         <li className="nm_headerName">发现</li>
-        <li className="nm_headerName">音乐库</li>
+        <li className="nm_headerName" @click="gotoLibary">音乐库</li>
       </ul>
     </div>
     <div className="right">
@@ -50,6 +50,7 @@ import { IMG_SRC, MENU_LIST } from "./index";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { setCookie, getCookie, removeCookie } from "../../utils/cookie";
+import { loginout } from "../../api/loginout/exit";
 const store = useStore();
 const router = useRouter();
 let img_src = ref<IMG_SRC>(
@@ -63,10 +64,10 @@ let loginMenu = reactive<MENU_LIST>({
   },
 });
 const getStatus = () => {
-  if (getCookie("MUSIC_U") !== undefined) {
+  if (getCookie("MUSIC_U") !== null) {
     f.value = !f.value;
     loginMenu.choose.login = "退出登录";
-    // img_src = store.state.data.userData.profile.avatarUrl
+    img_src.value = store.state.data.userData.profile.avatarUrl;
   } else {
     return;
   }
@@ -82,9 +83,14 @@ const showLoginEdit = () => {
 // 登录页
 const goLogin = () => {
   if (f.value === true) {
-    removeCookie(store.state.data.userData.MUSIC_U);
-    loginMenu.choose.login = "登录";
-    f.value = !f.value;
+    loginout().then((res: any) => {
+      if (res.data.code === 200) {
+        localStorage.removeItem("vuex");
+        removeCookie("MUSIC_U");
+        loginMenu.choose.login = "登录";
+        f.value = !f.value;
+      }
+    });
   } else {
     loginMenu.choose.login = "登录";
     router.push({
@@ -92,6 +98,19 @@ const goLogin = () => {
       params: {},
     });
     showFlag.value = !showFlag.value;
+  }
+};
+const gotoLibary = () => {
+  if (getCookie("MUSIC_U") === null) {
+    router.push({
+      name: "Login",
+      params: {},
+    });
+  } else {
+    router.push({
+      name: "Libary",
+      params: {},
+    });
   }
 };
 </script>
@@ -115,6 +134,7 @@ const goLogin = () => {
   justify-content: space-between;
   margin: 0 auto;
   z-index: 9999;
+  box-sizing: border-box;
   &:hover {
     cursor: pointer;
   }

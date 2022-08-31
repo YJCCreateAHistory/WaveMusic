@@ -30,7 +30,7 @@ import {
 import QRCode from "qrcode";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { setCookie,getCookie } from "../../utils/cookie";
+import { setCookie, getCookie } from "../../utils/cookie";
 
 const store = useStore();
 const router = useRouter();
@@ -86,7 +86,7 @@ const timingToCheckState = setInterval(() => {
       remindText.value = "扫描成功，请在手机确认登录";
     } else if (data.code === 803) {
       clearInterval(timingToCheckState);
-      setCookie(data.cookie)
+      setCookie(data.cookie);
       remindText.value = "登录成功，正在跳转中...";
       const resCode = await getLoginStatus(data.cookie);
       if (resCode.data.data.code === 200) {
@@ -95,20 +95,20 @@ const timingToCheckState = setInterval(() => {
           value: {
             account: resCode.data.data.account,
             profile: resCode.data.data.profile,
-            MUSIC_U:data.cookie
           },
         });
         store.dispatch("getUserAccountProfile").then((): void => {
-          router.push({
-            name: "Home",
-            params: {},
+          store.dispatch("getUserLikePlayList").then((): void => {
+            router.push({
+              name: "Home",
+              params: {},
+            });
           });
         });
       }
     }
   });
 }, 5000);
-console.log(store.state.data.userDdata)
 </script>
 
 <style scoped lang="less">
