@@ -2,17 +2,12 @@
   <div className="container">
     <div className="video_list">
       <ul>
-        <li v-for="(item, index) in mvs.data" @click="goPlayMv(item)" :key="item.id">
+        <li
+          v-for="(item, index) in mvs.data"
+          @click="goPlayMv(item)"
+          :key="item.id"
+        >
           <div className="v">
-            <!-- <vue-plyr :options="options">
-              <video controls playsinline>
-                <source
-                  size="1080"
-                  src="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-720p.mp4"
-                  type="video/mp4"
-                />
-              </video>
-            </vue-plyr> -->
             <img :src="item.coverUrl" alt="" />
           </div>
           <div className="intr">
@@ -33,8 +28,9 @@
 import { onMounted, reactive } from "vue";
 import { useStore } from "vuex";
 import { getMvList } from "../../api/mv/mv";
-import {useRouter} from "vue-router"
-const router = useRouter()
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 const store = useStore();
 const mvs = reactive<{ [key: string]: Array<any> }>({
   data: [],
@@ -43,27 +39,22 @@ onMounted(async () => {
   const {
     data: { data },
   } = await getMvList();
-  console.log(data)
   mvs.data = data;
 });
-const goPlayMv = (item:string)=>{
-    router.push({
-        name:"Play",
-        params:{
-            data:item
-        }
-    })
-}
-// const options = {
-//   i18n: {
-//     speed: "速度",
-//     normal: "正常",
-//   },
-// };
+const goPlayMv = (item: any) => {
+  store.commit("sendMvsId", { key: "mvid", value: item.vid });
+  store.dispatch("getVideosDetail").then(() => {
+    store.dispatch("getMvsDeatilToPlay").then(() => {
+      router.push({
+        name: "Play",
+        params: item.vid,
+      });
+    });
+  });
+};
 </script>
 
 <style scoped lang="less">
-    
 .container {
   position: absolute;
   top: 70px !important;

@@ -9,25 +9,61 @@ const routes: Array<RouteRecordRaw> = [
             keepAlive: true
         },
         children: [
-            {
-                path: "/home/libary",
-                name: "Libary",
-                component: () => import("../views/libary/libary.vue"),
-                meta: {
-                    title: "音乐库",
-                    keepAlive: true
-                }
-            },
-            {
-                path: "/home/libary/mv",
-                name: "Play",
-                component: () => import("../views/play/playmv.vue"),
-                meta: {
-                    title: "NV",
-                    keepAlive: true
-                }
-            }
         ]
+    },
+    {
+        path: "/libary",
+        name: "Libary",
+        component: () => import("../views/libary/libary.vue"),
+        meta: {
+            title: "音乐库",
+            keepAlive: true
+        }
+    },
+    {
+        path: "/libary/mv",
+        name: "Play",
+        component: () => import("../views/play/playmv.vue"),
+        meta: {
+            title: "MV",
+            keepAlive: true
+        }
+    },
+    {
+        path:"/libary/musics/:id",
+        name:"Musics",
+        component: () => import("../views/play/playdetail.vue"),
+        meta:{
+            title:"歌单详情",
+            keepAlive: true
+        }
+    },
+    {
+        path:"/mv",
+        name:"MV",
+        component:() => import("../views/MVhub/index.vue"),
+        meta:{
+            title:"MVS",
+            keepAlive: true
+        }
+    },
+    {
+        path:"/find",
+        name:"Find",
+        component:() => import("../views/discovery/index.vue"),
+        meta:{
+            title:"find",
+            keepAlive: true
+        }
+    },
+    {
+        path:"/friend",
+        name:"Friend",
+        component:() => import("../views/friend/index.vue"),
+        meta:{
+            title:"friend",
+            keepAlive: true
+        }
     },
     {
         path: "/login",
@@ -58,7 +94,7 @@ const router = createRouter({
 //     if (to.name === "Login") {
 //       return next()
 //     }
-//     if (to.name !== "Login" && !window.sessionStorage.getItem("token")) {
+//     if (to.name !== "Login" && !window.sessionStorage.getItem("MUSCI_U")) {
 //       return next({ name: "Login" });
 //     }
 

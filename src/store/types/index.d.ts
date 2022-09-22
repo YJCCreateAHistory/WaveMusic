@@ -1,4 +1,4 @@
-export interface USER_ACCOUNT {
+export interface VuexTypes {
     [key: string]: any
 }
 

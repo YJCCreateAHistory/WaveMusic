@@ -1,9 +1,11 @@
 import request from "../../http/request"
+import {HTTP_RES_DATA} from  "../../types/httpTypes/index"
+
 /**
  *@business {} get user profile 
  * 
 **/
-export const getUserAccount = ():Promise<any>=>{
+export const getUserAccount = ():Promise<HTTP_RES_DATA>=>{
     return request({
         url:"/user/account",
         method:"get",
@@ -18,7 +20,7 @@ export const getUserAccount = ():Promise<any>=>{
  * 
 **/
 
-export const getUserDetail = (uid:string):Promise<any>=>{
+export const getUserDetail = <T>(uid:T):Promise<any>=>{
     return request({
         url:"/user/detail",
         method:"get",

@@ -42,7 +42,7 @@ let email = ref<string>("");
 let password = ref<string>("");
 // 登录验证
 const loginByEmailTo = () => {
-  loginByEmail(email.value, password.value).then((res: RES) => {
+  loginByEmail<string, string>(email.value, password.value).then((res: RES) => {
     const { data } = res;
     console.log(data);
     if (data.code !== 200) {
@@ -81,11 +81,6 @@ const checkEmail = (): void => {
 // 登录
 const loginIn = async() => {
   checkEmail();
-  getUserAccount().then((res) => {
-  const {data:{account}} = res
-  console.log(account)
-  console.log(store.state.data)
-});
 };
 </script>
 <style scoped lang="less">

@@ -1,12 +1,10 @@
 <template>
-  <Nmheader></Nmheader>
   <QRcode v-if="qrcode"> </QRcode>
   <!-- <EmailLogin v-if="email"></EmailLogin> -->
   <CellPhone v-if="cellphone"></CellPhone>
   <div className="change_login_way">
     <ul>
       <li @click="changeWayEmail">{{ loginWay }}</li>
-
     </ul>
   </div>
 </template>

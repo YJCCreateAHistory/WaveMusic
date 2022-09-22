@@ -29,23 +29,23 @@
 </template>
 
 <script setup lang="ts">
-import { computed, markRaw, reactive, ref, shallowRef } from "vue";
-import { useStore } from "vuex";
+import { computed, markRaw, reactive, ref, shallowRef } from "vue"
+import { useStore } from "vuex"
 import { MS } from "./index";
-import Ranking from "../ranking/ranking.vue";
-import Ablums from "../ablums/ablums.vue";
-import Song from "../songlist/song.vue";
-import Follow from "../follows/follows.vue";
-import Followed from "../followed/followed.vue";
+import Ranking from "../ranking/ranking.vue"
+import Ablums from "../ablums/ablums.vue"
+import Song from "../songlist/song.vue"
+import Follow from "../follows/follows.vue"
+import Followed from "../followed/followed.vue"
 import MvRaw from "../mv/mv.vue"
 // import SongList from "../songlist/song.vue"
-const color = ref("blue");
-const store = useStore();
-const current = ref<number>(0);
-const create = ref<string>("新建歌单");
+const color = ref("blue")
+const store = useStore()
+const current = ref<number>(0)
+const create = ref<string>("新建歌单")
 // 切换组件
 const componentsTab = reactive([
-  {
+{
     name: "全部歌单",
     comp: markRaw(Song),
   },
@@ -69,14 +69,14 @@ const componentsTab = reactive([
     name: "听歌排行",
     comp: markRaw(Ranking),
   },
-]);
+])
 let currentComponent = reactive({
   comp: componentsTab[0].comp,
-});
+})
 const switchComponent = (component: any, index: any) => {
   current.value = index;
   currentComponent.comp = component.comp;
-};
+}
 </script>
 
 <style scoped lang="less">

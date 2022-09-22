@@ -31,7 +31,7 @@
     data: [],
   });
   onMounted(async () => {
-    const {data:{followeds}} = await getUserFollowed(userData.account.id);
+    const {data:{followeds}} = await getUserFollowed<string>(userData.account.id);
     ablums.data = followeds
   });
   </script>

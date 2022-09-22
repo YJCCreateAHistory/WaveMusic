@@ -74,7 +74,7 @@ onMounted(() => {
 // 二维码状态
 let remindText = ref<string>("打开网易云音乐APP扫码登录");
 const timingToCheckState = setInterval(() => {
-  checkQrcodeLoginState(key.value).then(async (res: RES) => {
+  checkQrcodeLoginState<string>(key.value).then(async (res: RES) => {
     let { data } = res;
     if (data.code === "") return;
     if (data.code === 800) {
@@ -86,9 +86,9 @@ const timingToCheckState = setInterval(() => {
       remindText.value = "扫描成功，请在手机确认登录";
     } else if (data.code === 803) {
       clearInterval(timingToCheckState);
-      setCookie(data.cookie);
+      setCookie<string>(data.cookie);
       remindText.value = "登录成功，正在跳转中...";
-      const resCode = await getLoginStatus(data.cookie);
+      const resCode = await getLoginStatus<string>(data.cookie);
       if (resCode.data.data.code === 200) {
         store.commit("sendDetailTostore", {
           key: "userData",

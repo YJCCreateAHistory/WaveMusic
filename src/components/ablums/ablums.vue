@@ -29,7 +29,6 @@ import { onMounted, reactive } from "vue";
 import { useStore } from "vuex";
 import { getAlbumList } from "../../api/music/music";
 const store = useStore();
-const { playlist } = store.state.data;
 let ablums = reactive<any>({
   data: [],
 });

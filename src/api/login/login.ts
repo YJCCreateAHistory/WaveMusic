@@ -1,8 +1,7 @@
 import request from "../../http/request"
 import md5 from "crypto-js/md5"
-import { LOGIN_RES_DATA } from "./index"
-import { Phone } from "@element-plus/icons-vue"
-export const haveQRcodeKey = ()=>{
+import {HTTP_RES_DATA} from  "../../types/httpTypes/index"
+export const haveQRcodeKey = ():Promise<HTTP_RES_DATA>=>{
     return request({
         url:"/login/qr/key",
         method:"get",
@@ -12,7 +11,7 @@ export const haveQRcodeKey = ()=>{
     })
 }
 
-export const createQrcode = (unikey:string):Promise<LOGIN_RES_DATA>=>{
+export const createQrcode = (unikey:string):Promise<HTTP_RES_DATA>=>{
     return request({
         url:"/login/qr/create",
         method:"get",
@@ -23,7 +22,7 @@ export const createQrcode = (unikey:string):Promise<LOGIN_RES_DATA>=>{
     })
 }
 
-export const checkQrcodeLoginState = (unikey:string):Promise<LOGIN_RES_DATA> => {
+export const checkQrcodeLoginState = <T>(unikey:T):Promise<HTTP_RES_DATA> => {
     return request({
         url:"/login/qr/check",
         method:"get",
@@ -34,20 +33,20 @@ export const checkQrcodeLoginState = (unikey:string):Promise<LOGIN_RES_DATA> => 
     })
 }
 
-export const loginByEmail = (email:string, psd:string):Promise<LOGIN_RES_DATA>=>{
+export const loginByEmail = <T, U extends T>(email:T, psd:U):Promise<HTTP_RES_DATA>=>{
     return request({
         url:"/login",
         method:"get",
         params:{
             email:email,
             password:psd,
-            md5_password:md5(psd).toString(),
+            // md5_password:md5(psd).toString(),
             timesamp:new Date().getTime()
         }
     })
 }
 
-export const loginByCellPhone = (phone:string, verify:string):Promise<LOGIN_RES_DATA> => {
+export const loginByCellPhone = (phone:string, verify:string):Promise<HTTP_RES_DATA> => {
     return request({
         url:"/login/cellphone",
         method:"get",
@@ -63,7 +62,7 @@ export const loginByCellPhone = (phone:string, verify:string):Promise<LOGIN_RES_
  * @business {验证码}
  * @params {phone，timesamp} 手机号 时间戳
 **/
-export const sendVirefMessage = (phone:string)=>{
+export const sendVirefMessage = (phone:string):Promise<HTTP_RES_DATA>=>{
     return request({
         url:"/captcha/sent",
         method:"get",
@@ -77,7 +76,7 @@ export const sendVirefMessage = (phone:string)=>{
  * @business {验证验证码}
  * @params {phone，captcha, timesamp} 手机号,验证码,时间戳
 **/
-export const checkVirefMessage = (phone:string, verify:string):Promise<any>=>{
+export const checkVirefMessage = <T, U extends T>(phone:T, verify:U):Promise<HTTP_RES_DATA>=>{
     return request({
         url:"/captcha/verify",
         method:"get",
@@ -89,7 +88,7 @@ export const checkVirefMessage = (phone:string, verify:string):Promise<any>=>{
     })
 }
 
-export const getLoginStatus = (cookie:string):Promise<any>=>{
+export const getLoginStatus = <T>(cookie:T):Promise<HTTP_RES_DATA>=>{
     return request({
         url:"/login/status",
         method:"post",

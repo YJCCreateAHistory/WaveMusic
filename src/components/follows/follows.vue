@@ -31,7 +31,7 @@
     data: [],
   });
   onMounted(async () => {
-    const {data:{follow}} = await getUserLikeSinger(userData.account.id);
+    const {data:{follow}} = await getUserLikeSinger<string>(userData.account.id);
     ablums.data = follow
   });
   </script>

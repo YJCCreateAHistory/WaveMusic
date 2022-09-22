@@ -12,9 +12,14 @@
     </div>
     <div className="center">
       <ul>
-        <li className="nm_headerName">首页</li>
-        <li className="nm_headerName">发现</li>
-        <li className="nm_headerName" @click="gotoLibary">音乐库</li>
+        <li
+          className="nm_headerName"
+          v-for="(item, index) in componentsTab"
+          @click="switchComponent(item)"
+          :key="item.id"
+        >
+          {{ item.name }}
+        </li>
       </ul>
     </div>
     <div className="right">
@@ -45,12 +50,18 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, reactive, ref } from "vue";
+import { computed, markRaw, onMounted, reactive, ref } from "vue";
 import { IMG_SRC, MENU_LIST } from "./index";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { setCookie, getCookie, removeCookie } from "../../utils/cookie";
 import { loginout } from "../../api/loginout/exit";
+import Libary from "../../views/libary/libary.vue";
+import Homed from "../../views/home/home.vue";
+import FindMusic from "../../views/discovery/index.vue";
+import Mvhub from "../../views/MVhub/index.vue";
+import Friend from "../../views/friend/index.vue";
+
 const store = useStore();
 const router = useRouter();
 let img_src = ref<IMG_SRC>(
@@ -100,18 +111,52 @@ const goLogin = () => {
     showFlag.value = !showFlag.value;
   }
 };
-const gotoLibary = () => {
-  if (getCookie("MUSIC_U") === null) {
-    router.push({
-      name: "Login",
-      params: {},
-    });
-  } else {
-    router.push({
-      name: "Libary",
-      params: {},
-    });
-  }
+const componentsTab = reactive([
+  {
+    name: "首页",
+    comp: markRaw(Homed),
+    id: 1,
+    path:"/"
+  },
+  {
+    name: "发现",
+    comp: markRaw(FindMusic),
+    id: 2,
+    path:"/find"
+  },
+  {
+    name: "MV",
+    comp: markRaw(Mvhub),
+    id: 3,
+    path:"/mv"
+
+  },
+  {
+    name: "朋友圈",
+    comp: markRaw(Friend),
+    id: 4,
+    path:"/friend"
+
+  },
+  {
+    name: "音乐库",
+    comp: markRaw(Libary),
+    id: 5,
+    path:"/libary"
+
+  },
+]);
+let currentComponent = reactive({
+  comp: componentsTab[0].comp,
+});
+const switchComponent = (component: any) => {
+  router.push({
+    path:component.path,
+    params:{
+
+    }
+  })
+  currentComponent.comp = component.comp;
 };
 </script>
 <style scoped lang="less">
@@ -121,19 +166,15 @@ const gotoLibary = () => {
   left: 0;
   min-width: 1100px;
   right: 0;
-  height: 60px;
+  height: 60px !important;
   background: rgba(255, 255, 255, 0.35);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
-  -webkit-box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
-  border-radius: 12px;
-  -webkit-border-radius: 12px;
   display: flex;
   justify-content: space-between;
   margin: 0 auto;
-  z-index: 9999;
+  z-index: 999;
   box-sizing: border-box;
   &:hover {
     cursor: pointer;
@@ -164,7 +205,7 @@ const gotoLibary = () => {
     ul {
       list-style: none;
       display: flex;
-      width: 200px;
+      width: 400px;
       justify-content: space-between;
       padding-inline-start: 0;
       margin-block-start: 0em;
@@ -176,6 +217,7 @@ const gotoLibary = () => {
         font-size: 18px;
         font-weight: bolder;
         font-weight: 700;
+        color: #000;
         &:hover {
           cursor: pointer;
           color: #9b52f4;

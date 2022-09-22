@@ -13,6 +13,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  
 }
 /* 解决页面切换滚动条引起的抖动 */
 html{overflow-y:scroll;} 

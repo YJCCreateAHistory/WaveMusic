@@ -89,7 +89,7 @@ const Verification = () => {
   }
 };
 const loginIn = async () => {
-  const { data } = await checkVirefMessage(phone.value, verify.value);
+  const { data } = await checkVirefMessage<string, string>(phone.value, verify.value);
   if (data.code === 200) {
     store.commit("sendUserIdByPhone", { key: "phone", value: data });
     store.dispatch("getUserAccountByPhone").then((): void => {

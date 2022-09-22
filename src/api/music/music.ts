@@ -1,11 +1,12 @@
 import request from "../../http/request"
-import {GET_USER_PLAY_LIST} from "./index"
+import {GET_USER_PLAY_LIST, HTTP_RES_DATA} from  "../../types/httpTypes/index"
+
 
 /**
  * @business {用户喜欢}
  * @params {null}
  * **/
-export const getUserLiked = ():Promise<any>=>{
+export const getUserLiked = ():Promise<HTTP_RES_DATA>=>{
     return request({
         url:"/user/subcount",
         method:"get",
@@ -19,7 +20,7 @@ export const getUserLiked = ():Promise<any>=>{
  * @business {用户歌单}
  * @params {必选：用户id} {可选：limit，offset}
  * **/
-export const getUserPlayList = (params:GET_USER_PLAY_LIST):Promise<any>=>{
+export const getUserPlayList = <T>(params:T):Promise<HTTP_RES_DATA>=>{
     return request({
         url:"/user/playlist",
         method:"post",
@@ -30,8 +31,7 @@ export const getUserPlayList = (params:GET_USER_PLAY_LIST):Promise<any>=>{
  * @business {用户喜欢音乐}
  * @params {必选：歌单id} {可选：limit，offset}
  * **/
-export const getUserLikedMusics = (params:GET_USER_PLAY_LIST):Promise<any>=>{
-    params.timesamp = new Date().getTime()
+export const getUserLikedMusics = <T>(params:T):Promise<HTTP_RES_DATA>=>{
     return request({
         url:"/playlist/track/all",
         method:"get",
@@ -42,7 +42,7 @@ export const getUserLikedMusics = (params:GET_USER_PLAY_LIST):Promise<any>=>{
  * @business {歌单详情}
  * @params {必选：歌单id} 
  * **/
-export const getPlayListDetail = (id:string):Promise<any>=>{
+export const getPlayListDetail = (id:string):Promise<HTTP_RES_DATA>=>{
     return request({
         url:"/playlist/detail",
         method:"get",
@@ -56,7 +56,7 @@ export const getPlayListDetail = (id:string):Promise<any>=>{
  * @business {喜欢音乐详情}
  * @params {必选：歌曲id} 
  * **/
-export const getMusicDeatil = (id:string):Promise<any>=>{
+export const getMusicDeatil = <T>(id:T):Promise<HTTP_RES_DATA>=>{
     return request({
         url:"/song/url",
         method:"get",
@@ -70,7 +70,7 @@ export const getMusicDeatil = (id:string):Promise<any>=>{
  * @business {用户收藏专辑}
  * @params {可选：limit，offset}
  * **/
-export const getAlbumList = ()=>{
+export const getAlbumList = ():Promise<HTTP_RES_DATA>=>{
     return request({
         url:"/album/sublist",
         method:"get",
@@ -87,7 +87,7 @@ export const getAlbumList = ()=>{
  * @params {null}
  * **/
 
-export const getUserRecentlyPlayed = ()=>{
+export const getUserRecentlyPlayed = ():Promise<HTTP_RES_DATA>=>{
     return request({
         url:"/record/recent/song",
         method:"get",
@@ -102,7 +102,7 @@ export const getUserRecentlyPlayed = ()=>{
  * @params {必选:用户id}
  * **/
 
- export const getUserPlayedReocrd = (id:string,type?:number)=>{
+ export const getUserPlayedReocrd = (id:string,type?:number):Promise<HTTP_RES_DATA>=>{
     return request({
         url:"/user/record",
         method:"get",

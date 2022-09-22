@@ -40,13 +40,6 @@
 
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
-import {
-  getUserLiked,
-  getUserPlayList,
-  getUserLikedMusics,
-  getPlayListDetail,
-  getMusicDeatil,
-} from "../../api/music/music";
 import { useStore } from "vuex";
 import { MUSIC_LIST, RES } from "./index";
 const store = useStore();
@@ -56,31 +49,7 @@ const nums = ref<number>();
 const musics = reactive<MUSIC_LIST>({
   db: [],
 });
-const musicList = reactive<MUSIC_LIST>({
-  db: store.state.data.playlist,
-});
-const { playlist } = store.state.data;
-let params = {
-  id: playlist[0].id,
-  limit: 12,
-  offset: 0,
-};
-// getPlayListDetail(params.id).then((res: RES) => {
-//   const {
-//     data: { privileges },
-//   } = res;
-//   console.log(res, 222)
-// });
-
-// getUserLikedMusics(params).then((res: RES) => {
-//   const {
-//     data: { songs },
-//   } = res;
-//   console.log(res, 111);
-// });
-// console.log(store.state.data);
 onMounted(() => {
-  // getMusics();
   nums.value = store.state.data.num;
   musics.db = store.state.data.likeMusic;
 });
@@ -93,6 +62,7 @@ onMounted(() => {
   height: 340px;
   position: absolute;
   top: 180px;
+
   .c {
     min-width: 1380px;
     position: absolute;

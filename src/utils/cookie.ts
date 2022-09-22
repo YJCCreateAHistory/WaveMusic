@@ -1,6 +1,6 @@
 import cookie from "js-cookie";
 // import {logout} from "../api/loginout/exit"
-export const setCookie = (cookie: string): void => {
+export const setCookie = <T extends string>(cookie: T): void => {
     localStorage.setItem('MUSIC_U', cookie)
 
 }

@@ -7,7 +7,8 @@ import {
     getPlayListDetail,
     getMusicDeatil
 } from "../api/music/music"
-import { USER_ACCOUNT } from "./types/index"
+import { getMvDetailById, getVideoDetailById, getVideoDetailUrlById, getMvDetailUrlById } from "../api/mv/mv"
+import { VuexTypes } from "./types/index"
 
 export default {
     // user profile
@@ -24,10 +25,10 @@ export default {
     //         })
     //     }
     // },
-    getUserAccountProfile: ({ state, commit }: any): void | Promise<any> => {
+    getUserAccountProfile: ({ state, commit }: { [key: string]: any }): void | Promise<any> => {
         if (isLoginedIn()) {
             // get user detail
-            return getUserDetail(state.data.userData.account.id).then((res: USER_ACCOUNT) => {
+            return getUserDetail<string>(state.data.userData.account.id).then((res: VuexTypes) => {
                 if (res.data.code === 200) {
                     commit("getUserDetailInfo",
                         {
@@ -39,7 +40,7 @@ export default {
         }
     },
     // user playlist
-    getUserLikePlayList: ({ state, commit }: any): void | Promise<any> => {
+    getUserLikePlayList: ({ state, commit }: { [key: string]: any }): void | Promise<any> => {
         if (isLoginedIn()) {
             let params = {
                 uid: state.data.userData.account.id,
@@ -47,24 +48,29 @@ export default {
                 offset: 0,
                 timesamp: new Date().getTime()
             }
-            return getUserPlayList(params).then(async (res: USER_ACCOUNT) => {
+            return getUserPlayList<{
+                [key: string]: string | number
+            }>(params).then(async (res: VuexTypes) => {
                 // submit playlist
                 if (res.data.code === 200) {
                     commit("updateUserPlayList", {
                         key: "playlist",
                         value: res.data.playlist
                     })
+                    commit('updatePLayIntro', { key: "intro", value: res.data })
                     let music = {
                         id: res.data.playlist[0].id,
                         limit: 12,
                         offset: 0,
                     }
-                    getUserLikedMusics(music).then((res: USER_ACCOUNT) => {
+                    getUserLikedMusics<{
+                        [key: string]: string | number
+                    }>(music).then((res: VuexTypes) => {
                         const { data: { songs } } = res
                         commit('sendMusicNums', { key: "likeMusic", value: songs })
                     })
-                    getPlayListDetail(music.id).then((res: USER_ACCOUNT) => {
-                        const { data: { privileges,playlist } } = res
+                    getPlayListDetail(music.id).then((res: VuexTypes) => {
+                        const { data: { privileges } } = res
                         commit('sendMusicLiked', { key: "num", value: privileges.length })
                         // commit("sendMusicLiked", { key: "num", value: playlist.trackIds.length})
                     })
@@ -72,10 +78,49 @@ export default {
             })
         }
     },
-    getUserAccountByPhone: ({ state, commit }: any): void | Promise<any> => {
-        if (isLoginedIn()) {
-
+    getVideosDetail: ({ state, commit }: { [key: string]: any }): void | Promise<any> => {
+        const id = state.data.mvid
+        let reg = /^-?\d+(?:\.\d*)?(?:e[+\-]?\d+)?$/i
+        if (reg.test(id)) {
+            return getMvDetailUrlById<string>(id).then((result: VuexTypes) => {
+                const { data: { data } } = result
+                commit("sendVideoDetail", { key: "vd", value: [data] })
+            })
+        } else {
+            return getVideoDetailUrlById<string>(id).then((result: VuexTypes) => {
+                const { data: { urls } } = result
+                commit("sendVideoDetail", { key: "vd", value: urls })
+            })
         }
     },
+    getMvsDeatilToPlay: ({ state, commit }: { [key: string]: any }): void | Promise<any> => {
+        const id = state.data.mvid
+        // 判断是mv还是视频
+        let reg = /^-?\d+(?:\.\d*)?(?:e[+\-]?\d+)?$/i
+        if (reg.test(id)) {
+            return getMvDetailById<string>(id).then((res: VuexTypes) => {
+                const { data: { data } } = res
+                commit("sendMvsDetail", { key: "md", value: data })
+            })
+        } else {
+            return getVideoDetailById<string>(id).then((res: VuexTypes) => {
+                const { data: { data } } = res
+                commit("sendMvsDetail", { key: "md", value: data })
+            })
+        }
+    },
+    updatePlayMusicList: ({ state, commit }: { [key: string]: any }): void | Promise<any> => {
+        const pid = state.play.playInfo.id
+        const data = state.play.num
+        const params = {
+            id: pid,
+            limit: data.limit,
+            offset: data.offset,
+        }
+        return getUserLikedMusics<{ [key: string]: string | number }>(params).then((res: VuexTypes) => {
+            const { data: { songs } } = res
+            commit("updatePlayMusicLists", { key: "songs", value: songs })
+        })
+    }
 
 }
